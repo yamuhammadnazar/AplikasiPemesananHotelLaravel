@@ -4,57 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-
+use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
     //
-    public function tampilData(string $id):View {
 
-        return view('customers.profile',[
-        'customers' => Customer::findOrFail($id)
-        ]);
-    }
     public function index(): View
     {
-       $customers = Customer::latest()->paginate(10);
-       return view('customers.index', compact('customers'));
+        $customers = Customer::latest()->paginate(10);
+        return view('levelAdmin.customers.index', compact('customers'));
     }
 
     public function create()
     {
-        return view('customers.create');
+        return view('levelAdmin.customers.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'NIK' => 'required|string|max:16|unique:customers',
+            'NIK' => 'required|string|max:16',
             'nama_customer' => 'required|string|max:150',
-            'email' => 'required|string|max:50',
-            'country' => 'required|string|max:10',
+            'email' => 'required',
+            'country' => 'required',
         ]);
 
         Customer::create($request->all());
 
-        return redirect()->route('akun.index')
+        return redirect()->route('admin.customer.index')
             ->with('success', 'Customer berhasil ditambahkan.');
     }
 
     public function show(string $id): View
     {
-        $akun = Customer::findOrFail($id);
+        $customers = Customer::findOrFail($id);
 
-        return view('customers.show', compact('akun'));
+        return view('levelAdmin.customers.show', compact('customers'));
     }
-
-    public function edit(string $id): View
+    public function edit(string $id)
     {
-        $akun = Customer::findOrFail($id);
+        $customers = Customer::findOrFail($id);
 
-        return view('customers.edit', compact('akun'));
+        return view('levelAdmin.customers.edit', compact('customers'));
     }
 
     public function update(Request $request, $id): RedirectResponse
@@ -62,21 +55,21 @@ class CustomerController extends Controller
         $request->validate([
             'NIK' => 'required|string|max:16',
             'nama_customer' => 'required|string|max:150',
-            'email' => 'required|string|max:50',
-            'country' => 'required|string|max:10',
+            'email' => 'required',
+            'country' => 'required',
         ]);
 
-        $akun = Customer::findOrFail($id);
-        $akun->update($request->all());
+        $customers = Customer::findOrFail($id);
+        $customers->update($request->all());
 
-        return redirect()->route('akun.index')
+        return redirect()->route('admin.customer.index')
             ->with('success', 'Data customer berhasil diubah!.');
     }
 
     public function destroy($id): RedirectResponse
     {
-        $akun = Customer::findOrFail($id);
-        $akun->delete();
-        return redirect()->route('akun.index')->with(['success' => 'Data Customer Berhasil Dihapus!']);
+        $customers = Customer::findOrFail($id);
+        $customers->delete();
+        return redirect()->route('admin.customer.index')->with(['success' => 'Data Customer Berhasil Dihapus!']);
     }
 }

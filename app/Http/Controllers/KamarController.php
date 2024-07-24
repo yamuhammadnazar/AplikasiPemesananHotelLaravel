@@ -4,28 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Kamar;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-
+use Illuminate\Http\Request;
 
 class KamarController extends Controller
 {
-    //
+    
     public function index(): View
     {
-       $kamar = Kamar::latest()->paginate(10);
-       return view('kamar.index', compact('kamar'));
+        $kamar = Kamar::latest()->paginate(10);
+        return view('levelAdmin.kamar.index', compact('kamar'));
     }
 
     public function create()
     {
-        return view('kamar.create');
+        $kamar = Kamar::all();
+        return view('levelAdmin.kamar.create', compact('kamar'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kamar' => 'required',
+            'nama_kamar' => 'required|string|max:100',
             'jenis_kamar' => 'required',
             'ukuran_kamar' => 'required',
             'harga' => 'required',
@@ -33,7 +33,7 @@ class KamarController extends Controller
 
         Kamar::create($request->all());
 
-        return redirect()->route('kamar.index')
+        return redirect()->route('admin.kamar.index')
             ->with('success', 'Kamar berhasil ditambahkan.');
     }
 
@@ -41,20 +41,19 @@ class KamarController extends Controller
     {
         $kamar = Kamar::findOrFail($id);
 
-        return view('kamar.show', compact('kamar'));
+        return view('levelAdmin.kamar.show', compact('kamar'));
     }
-
-    public function edit(string $id): View
+    public function edit(string $id)
     {
         $kamar = Kamar::findOrFail($id);
 
-        return view('kamar.edit', compact('kamar'));
+        return view('levelAdmin.kamar.edit', compact('kamar'));
     }
 
     public function update(Request $request, $id): RedirectResponse
     {
         $request->validate([
-            'nama_kamar' => 'required',
+            'nama_kamar' => 'required|string|max:100',
             'jenis_kamar' => 'required',
             'ukuran_kamar' => 'required',
             'harga' => 'required',
@@ -63,14 +62,13 @@ class KamarController extends Controller
         $kamar = Kamar::findOrFail($id);
         $kamar->update($request->all());
 
-        return redirect()->route('kamar.index')
-            ->with('success', 'Data kamar berhasil diubah!.');
+        return redirect()->route('admin.kamar.index')->with('success', 'Data kamar berhasil diubah!.');
     }
 
     public function destroy($id): RedirectResponse
     {
         $kamar = Kamar::findOrFail($id);
         $kamar->delete();
-        return redirect()->route('kamar.index')->with(['success' => 'Data kamar Berhasil Dihapus!']);
+        return redirect()->route('admin.customer.index')->with(['success' => 'Data Kamar Berhasil Dihapus!']);
     }
 }

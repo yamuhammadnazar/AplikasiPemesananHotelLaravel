@@ -16,8 +16,16 @@ class Customer extends Authenticatable
         'NIK',
         'nama_customer',
         'email',
-        'country',
+        'country'
     ];
 
     public $timestamp = false;
+
+    public function dataTambahanReservasiCustomer(){
+        return $this->hasOne(Reservasi::class,'customer_id');
+    }
+
+    public function dataTambahanPembayaran(){
+        return $this->hasOne(Pembayaran::class,'customer_id');
+    }
 }
